@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shape Catcher</title>
+	<link rel="shortcut icon" type="image/png" href="channels4_profile-removebg.png"/>
+    <!--Sasika Konara-->
+    <style type="text/css">
+        #shape {
+            height: 100px;
+            width: 100px;
+            display:none;
+            position:relative;
+        }
+        
+        #clickTime{
+        background-color:black;
+        font-size:25px;
+        color:white;
+        text-align:center;
+        }
+        h1{
+        color:white;
+        text-align:center;
+        background-color:maroon;
+        height:50px;
+        width:100%;
+        margin-top: 0;
+        }
+        .topnav {
+          background-color: #333;
+          overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+          float: left;
+          color: #f2f2f2;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+          background-color: #ddd;
+          color: black;
+        }
+
+        /* Add a color to the active/current link */
+        .topnav a.active {
+          background-color: #04AA6D;
+          color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="active" href="#home">Home</a>
+  <a href="best-records.html">Click Records</a>
+</div>
+
+<h1>Click the Shape as soon As you Can</h1>
+<p id="clickTime"> You Got </p>
+<div id="shape"></div>
+
+<script type="text/javascript">
+    var start = new Date().getTime();
+    var clickCount = 0;
+    var totalTime = 0;
+    
+    function saveRecord(clickCount, totalTime) {
+        var records = JSON.parse(localStorage.getItem('bestRecords')) || [];
+        records.push({ clickCount: clickCount, totalTime: totalTime });
+        localStorage.setItem('bestRecords', JSON.stringify(records));
+    }
+
+    function startNewGame() {
+        // Clear the local storage
+        localStorage.removeItem('bestRecords');
+        
+        // Reset variables and display
+        clickCount = 0;
+        totalTime = 0;
+        document.getElementById("clickTime").innerHTML = "You Got";
+        
+        // Start new game
+        appearDelay();
+    }
+
+    function appear() {
+        var top=Math.random()*400;
+        var left=Math.random()*400;
+        var width=Math.random()*400;
+        var height=Math.random()*400;
+        var colorNames = ["Red", "Green", "Blue", "Yellow", "Orange", "Purple", "Pink", "Brown", "Black"];
+        
+        if(Math.random()>0.5){
+            document.getElementById("shape").style.borderRadius="50%";
+        } else {
+            document.getElementById("shape").style.borderRadius="0%";
+        }
+
+        document.getElementById("shape").style.backgroundColor = colorNames[Math.floor(Math.random() * 9)];
+        document.getElementById("shape").style.width=width+"px";
+        document.getElementById("shape").style.height=width+"px";
+        document.getElementById("shape").style.top=top+"px";
+        document.getElementById("shape").style.left=left+"px";
+        document.getElementById("shape").style.display = "block";
+        start = new Date().getTime();
+    }
+    
+    function appearDelay(){
+        setTimeout(appear,Math.random()*2000);
+    }
+    appearDelay();
+    
+    document.getElementById("shape").onclick = function() {
+        clickCount++;
+        if (clickCount <= 20) {
+            document.getElementById("shape").style.display = "none";
+            var end = new Date().getTime();
+            var time = (end - start) / 1000;
+            totalTime += time;
+            document.getElementById("clickTime").innerHTML = "You got " + clickCount + " shapes in " + totalTime.toFixed(2) + " seconds.";
+            saveRecord(clickCount, totalTime); // Save record
+            setTimeout(appear,Math.random()*2000);
+            appearDelay();
+        } else {
+            document.getElementById("shape").style.display = "none";
+            startNewGame(); // Start new game
+        }
+    }
+</script>
+</body>
+</html>
